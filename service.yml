@@ -1,0 +1,12 @@
+services:
+ backend:
+  log_folder: "/usr/src/app/log"
+  ports:
+   - container: 3090
+      http: 80
+      https: 443
+   git_url: https://github.com/openpeer/23gate
+   git_branch: deploy
+   dockerfile_path: Dockerfile
+databases:
+- mysql

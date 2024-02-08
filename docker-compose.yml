@@ -1,0 +1,17 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./backend/.env
+      - ./frontend/.env
+    ports:
+      - '3090:3090'
+  # worker:
+  #   build: ./worker
+  #   environment:
+  #     - NODE_ENV=production
