@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { ethers } from 'ethers';
+import fetch from 'node-fetch';
 import { parseAbi } from './parseAbi.mjs';
 import * as url from 'url';
 

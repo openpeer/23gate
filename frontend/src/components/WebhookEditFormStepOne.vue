@@ -3,17 +3,72 @@
     <div v-if="shouldShowDevelopmentHint" class="col-span-3 md:grid md:grid-cols-2 md:gap-6 text-sm text-slate-400 mb-10">
       <div class="col">
         Development tools for BSC:
-        <br>
-        <a class="font-mono link-dashed" href="#" @click.prevent="fillChainIdAndAddress(0x38, '0x55d398326f99059fF775485246999027B3197955')">0x55d398326f99059fF775485246999027B3197955</a> USDT
-        <br>
-        <a class="font-mono link-dashed" href="#" @click.prevent="fillChainIdAndAddress(0x38, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56')">0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56</a> BUSD (emulated unverified)
+        <br />
+        <a
+          class="font-mono link-dashed"
+          href="#"
+          @click.prevent="
+            fillChainIdAndAddress(0x38, '0x55d398326f99059fF775485246999027B3197955')
+          "
+          >0x55d398326f99059fF775485246999027B3197955</a
+        >
+        USDT
+        <br />
+        <a
+          class="font-mono link-dashed"
+          href="#"
+          @click.prevent="
+            fillChainIdAndAddress(0x38, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56')
+          "
+          >0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56</a
+        >
+        BUSD (emulated unverified)
       </div>
       <div class="col">
         Development tools for Polygon:
-        <br>
-        <a class="font-mono link-dashed" href="#" @click.prevent="fillChainIdAndAddress(0x89, '0xc2132D05D31c914a87C6611C10748AEb04B58e8F')">0xc2132D05D31c914a87C6611C10748AEb04B58e8F</a> USDT
-        <br>
-        <a class="font-mono link-dashed" href="#" @click.prevent="fillChainIdAndAddress(0x89, '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619')">0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619</a> WETH
+        <br />
+        <a
+          class="font-mono link-dashed"
+          href="#"
+          @click.prevent="
+            fillChainIdAndAddress(0x89, '0xc2132D05D31c914a87C6611C10748AEb04B58e8F')
+          "
+          >0xc2132D05D31c914a87C6611C10748AEb04B58e8F</a
+        >
+        USDT
+        <br />
+        <a
+          class="font-mono link-dashed"
+          href="#"
+          @click.prevent="
+            fillChainIdAndAddress(0x89, '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619')
+          "
+          >0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619</a
+        >
+        WETH
+      </div>
+      <div class="col">
+        Development tools for Blast:
+        <br />
+        <a
+          class="font-mono link-dashed"
+          href="#"
+          @click.prevent="
+            fillChainIdAndAddress(0xa0c71fd, '0x4200000000000000000000000000000000000022')
+          "
+          >0x4200000000000000000000000000000000000022</a
+        >
+        USDB
+        <br />
+        <a
+          class="font-mono link-dashed"
+          href="#"
+          @click.prevent="
+            fillChainIdAndAddress(0xa0c71fd, '0x4200000000000000000000000000000000000023')
+          "
+          >0x4200000000000000000000000000000000000023</a
+        >
+        WETH
       </div>
     </div>
 
@@ -123,15 +178,14 @@ async function onSubmit() {
   const result = await get('/abi/', { address: address.value, chainId: chainId.value });
 
   if (!result) {
-    $error("Server-side error","Couldn't get ABI.");
-    return;
+    $error('Server-side error', "Couldn't get ABI.");
   }
 
-  const { success, events } = result;
+  const success = result?.success;
+  const events = result?.events;
 
   if (!success) {
-    $error("Server-side error","Couldn't get ABI.");
-    return;
+    $error('Server-side error', "Couldn't get ABI.");
   }
 
   isFormDisabled.value = true;

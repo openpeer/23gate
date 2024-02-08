@@ -1,7 +1,7 @@
 import { Sequelize, Model } from 'sequelize';
 import { ethers } from 'ethers';
 
-const MAX_WEBHOOK_FAILED_COUNT = 300;
+const MAX_WEBHOOK_FAILED_COUNT = 3000;
 
 export class Webhook extends Model {
   static structure = {

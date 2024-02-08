@@ -2,7 +2,7 @@ const networks = [
   {
     chainId: 0x01,
     title: 'Ethereum',
-    aliases: [ 'mainnet' ],
+    aliases: ['mainnet'],
     explorerUrl: 'https://etherscan.io/search?q=',
     icon: '/networks/ethereum.png',
     outdatedThresholdSeconds: 600,
@@ -12,7 +12,7 @@ const networks = [
   {
     chainId: 0x89,
     title: 'Polygon',
-    aliases: [ 'matic' ],
+    aliases: ['matic'],
     explorerUrl: 'https://polygonscan.com/search?q=',
     icon: '/networks/polygon.png',
     outdatedThresholdSeconds: 600,
@@ -22,7 +22,7 @@ const networks = [
   {
     chainId: 0x38,
     title: 'BNB Chain',
-    aliases: [ 'bsc', 'bnb' ],
+    aliases: ['bsc', 'bnb'],
     explorerUrl: 'https://bscscan.com/search?q=',
     icon: '/networks/bnb.png',
     outdatedThresholdSeconds: 600,
@@ -30,9 +30,19 @@ const networks = [
   },
 
   {
+    chainId: 0xa0c71fd,
+    title: 'Blast Testnet',
+    aliases: ['blast', 'blast-sepolia'],
+    explorerUrl: 'https://testnet.blastscan.io/tx/',
+    icon: '/networks/blast.png',
+    outdatedThresholdSeconds: 600,
+    isEnabled: true
+  },
+
+  {
     chainId: 0xfa,
     title: 'Fantom Opera',
-    aliases: [ 'ftm', 'fantom' ],
+    aliases: ['ftm', 'fantom'],
     explorerUrl: 'https://ftmscan.com/search?q=',
     icon: '/networks/fantom-opera.png',
     outdatedThresholdSeconds: 600,
@@ -50,7 +60,9 @@ for (const network of networks) {
   chainIdByTitle[network.title.toLowerCase()] = network.chainId;
 
   if (network.aliases) {
-    network.aliases.forEach(alias => chainIdByTitle[alias.toLowerCase()] = network.chainId);
+    network.aliases.forEach(
+      (alias) => (chainIdByTitle[alias.toLowerCase()] = network.chainId)
+    );
   }
 
   if (network.isEnabled) {
@@ -59,7 +71,6 @@ for (const network of networks) {
       value: network.chainId,
       icon: network.icon
     });
-
   } else {
     networksListForSelect.push({
       label: network.title + ' (coming soon!)',
@@ -70,9 +81,4 @@ for (const network of networks) {
   }
 }
 
-export {
-  networks,
-  networkByChainId,
-  chainIdByTitle,
-  networksListForSelect
-};
+export { networks, networkByChainId, chainIdByTitle, networksListForSelect };
