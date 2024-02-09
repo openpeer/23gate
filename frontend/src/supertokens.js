@@ -26,5 +26,4 @@ export const SuperTokensWebJSConfig = {
   },
   recipeList: [Session.init()],
 }
-console.log('SuperTokensWebJSConfig', SuperTokensWebJSConfig)
 SuperTokens.init(SuperTokensWebJSConfig)
