@@ -81,6 +81,7 @@ const { Payload } = await import('./Payload.model.mjs')
 const { PayloadFinished } = await import('./PayloadFinished.model.mjs')
 
 const options = {
+  dialect: 'mysql',
   logging: false,
   define: {
     freezeTableName: true,
@@ -91,12 +92,7 @@ const options = {
   },
 }
 
-export const sequelize = new Sequelize(
-  `${process.env.MYSQL_URL}/${process.env.MYSQL_DATABASE}`,
-  process.env.MYSQL_USERNAME,
-  process.env.MYSQL_PASSWORD,
-  options
-)
+export const sequelize = new Sequelize(process.env.MYSQL_URL, options)
 
 // actually try to connect
 await sequelize.authenticate()
