@@ -4,6 +4,9 @@ import Fastify from 'fastify'
 import fastifyAutoload from '@fastify/autoload'
 import { sequelize } from './models/index.mjs'
 import formDataPlugin from '@fastify/formbody'
+import bearerAuthPlugin from '@fastify/bearer-auth'
+
+const keys = new Set(process.env.API_KEYS.split(','))
 
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -23,23 +26,7 @@ fastify.register(formDataPlugin)
 
 fastify.decorate('sequelize', sequelize)
 
-fastify.addHook('onRequest', async (request, reply) => {
-  if (request.url.startsWith('/api/')) {
-    try {
-      // await verifySession()(request, reply)
-    } catch (err) {
-      // console.log('Supertokens VerifySession error:', err)
-    }
-
-    const userId = request?.session?.getUserId
-      ? request.session.getUserId()
-      : null
-    if (!userId) {
-      reply.status(401).send({ success: false, message: 'Unauthorized' })
-      return
-    }
-  }
-})
+fastify.register(bearerAuthPlugin, { keys })
 
 fastify.register(fastifyAutoload, {
   dir: path.resolve('.', 'routes'),
