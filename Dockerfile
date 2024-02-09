@@ -11,8 +11,8 @@ RUN npm run build
 FROM node:18 as backend
 WORKDIR /app
 COPY --from=frontend /app/frontend-dist ./frontend-dist
+COPY --from=frontend /app/common ./common
 COPY backend/package*.json ./backend/
-COPY common/ ../common
 RUN mkdir logs
 WORKDIR /app/backend
 RUN npm install --omit=dev
