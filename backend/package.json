@@ -19,8 +19,7 @@
     "mysql2": "^3.6.1",
     "node-fetch": "^3.3.2",
     "pino-pretty": "^10.2.0",
-    "sequelize": "^6.33.0",
-    "supertokens-node": "^13.4.0"
+    "sequelize": "^6.33.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.15",
