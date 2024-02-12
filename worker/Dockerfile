@@ -2,8 +2,16 @@
 FROM node:18 as worker
 WORKDIR /app
 COPY common/ ./common/
-COPY backend/ ./backend/
+COPY backend/package*.json ./backend/
+RUN mkdir logs
+
+WORKDIR /app/backend
+RUN npm install --omit=dev
+COPY backend/ .
+
+WORKDIR /app
 COPY worker/package*.json ./worker/
+
 WORKDIR /app/worker
 RUN npm install --omit=dev
 COPY worker/ .
