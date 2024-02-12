@@ -1,5 +1,5 @@
-import { ethers } from 'ethers';
-import { chainIdByTitle, networks } from '../../../../common/networks.mjs';
+import { ethers } from 'ethers'
+import { chainIdByTitle, networks } from '../../../../common/networks.mjs'
 
 export default async function routes(instance) {
   instance.get(
@@ -14,82 +14,88 @@ export default async function routes(instance) {
               type: 'string',
             },
             limit: {
-              type: 'number'
+              type: 'number',
             },
             offset: {
-              type: 'number'
-            }
+              type: 'number',
+            },
           },
-          required: ['limit', 'offset']
-        }
-      }
+          required: ['limit', 'offset'],
+        },
+      },
     },
 
-    async request => {
-      const where = [
-        { userId: request.user.id }
-      ];
+    async (request) => {
+      const where = [{ userId: request.user.id }]
 
       const options = {
         limit: request.query.limit,
-        offset: request.query.offset
-      };
+        offset: request.query.offset,
+      }
 
       if (request.query.search) {
         if (request.query.search.startsWith('http')) {
           where.push({
             url: {
-              [instance.sequelize.Sequelize.Op.startsWith]: request.query.search
-            }
-          });
-
+              [instance.sequelize.Sequelize.Op.startsWith]:
+                request.query.search,
+            },
+          })
         } else if (request.query.search.startsWith('#')) {
           where.push({
-            id: request.query.search.substring(1) // let MySQL do the casting
-          });
-
+            id: request.query.search.substring(1), // let MySQL do the casting
+          })
         } else {
-          const searchStringNormalized = request.query.search.trim().replace(/\s+/g, ' ');
+          const searchStringNormalized = request.query.search
+            .trim()
+            .replace(/\s+/g, ' ')
 
-          const chainIdCandidate = chainIdByTitle[searchStringNormalized.toLowerCase()];
+          const chainIdCandidate =
+            chainIdByTitle[searchStringNormalized.toLowerCase()]
           if (chainIdCandidate) {
             where.push({
-              chainId: chainIdCandidate
-            });
-
+              chainId: chainIdCandidate,
+            })
           } else {
-            const str = instance.sequelize.escape(searchStringNormalized + '*');
+            const str = instance.sequelize.escape(searchStringNormalized + '*')
             where.push(
-              instance.sequelize.Sequelize.literal(`MATCH (addressList, eventName) AGAINST(${str} IN BOOLEAN MODE)`)
-            );
+              instance.sequelize.Sequelize.literal(
+                `MATCH (addressList, eventName) AGAINST(${str} IN BOOLEAN MODE)`
+              )
+            )
           }
         }
       }
 
       options.where = {
-        [instance.sequelize.Sequelize.Op.and]: where
-      };
+        [instance.sequelize.Sequelize.Op.and]: where,
+      }
 
-      options.order = [[ 'id', 'DESC' ]];
+      options.order = [['id', 'DESC']]
 
-      const result = await instance.sequelize.models.Webhook.findAndCountAll(options);
+      const result = await instance.sequelize.models.Webhook.findAndCountAll(
+        options
+      )
 
-      return { success: true, ...result };
+      return { success: true, ...result }
     }
-  );
+  )
 
   instance.get(
     '/:id(^\\d+)/',
 
-    async request => {
-      const webhook = await instance.sequelize.models.Webhook.findByIdAndUserId(request.params.id, request.user.id);
+    async (request) => {
+      const webhook = await instance.sequelize.models.Webhook.findByIdAndUserId(
+        request.params.id,
+        request.user.id
+      )
       if (!webhook) {
-        return { success: false, message: "Webhook not found" };
+        return { success: false, message: 'Webhook not found' }
       }
 
-      return { success: true, webhook };
+      return { success: true, webhook }
     }
-  );
+  )
 
   instance.post(
     '/',
@@ -103,127 +109,142 @@ export default async function routes(instance) {
               type: 'object',
               properties: {
                 chainId: {
-                  type: 'number'
+                  type: 'number',
                 },
                 addressList: {
-                  type: 'string'
+                  type: 'string',
                 },
                 event: {
-                  type: 'string'
+                  type: 'string',
                 },
                 url: {
-                  type: 'string'
+                  type: 'string',
                 },
                 confirmations: {
-                  type: 'number'
-                }
+                  type: 'number',
+                },
               },
-              required: ['chainId', 'addressList', 'event', 'url', 'confirmations']
+              required: [
+                'chainId',
+                'addressList',
+                'event',
+                'url',
+                'confirmations',
+              ],
             },
           },
-          required: ['webhook']
-        }
-      }
+          required: ['webhook'],
+        },
+      },
     },
 
-    async request => {
-      let userId = request.user.id;
+    async (request) => {
+      const user = await instance.sequelize.models.User.findOne()
+      const userId = user.id
 
-      if (!userId) {
-        // NOTE: we create user when we create webhook
-        const user = await instance.sequelize.models.User.create({ email: request.user.email });
-        userId = user.id;
-      }
+      const parsed = new ethers.Interface([request.body.webhook.event])
+      const eventFragment = parsed.fragments[0]
+      const formattedEvent = eventFragment.format('full')
 
-      const parsed = new ethers.Interface([ request.body.webhook.event ]);
-      const eventFragment = parsed.fragments[0];
-      const formattedEvent = eventFragment.format('full');
-
-      const addressList = instance.sequelize.models.Webhook.parseAddressListString(request.body.webhook.addressList);
+      const addressList =
+        instance.sequelize.models.Webhook.parseAddressListString(
+          request.body.webhook.addressList
+        )
       if (!addressList) {
-        return { success: false, message: "Failed to parse address list" };
+        return { success: false, message: 'Failed to parse address list' }
       }
 
-      const isNetworkFound = networks.find(n => n.chainId == request.body.webhook.chainId && n.isEnabled);
+      const isNetworkFound = networks.find(
+        (n) => n.chainId == request.body.webhook.chainId && n.isEnabled
+      )
       if (!isNetworkFound) {
-        return { success: false, message: "Unknown network" };
+        return { success: false, message: 'Unknown network' }
       }
 
       const record = {
         chainId: request.body.webhook.chainId,
         userId,
-        abi: [ formattedEvent ],
+        abi: [formattedEvent],
         eventName: eventFragment.name,
         addressList,
-        url: request.body.webhook.url
-      };
-
-      let result;
-      try {
-        result = await instance.sequelize.models.Webhook.create(record);
-      } catch (error) {
-        console.log(error);
+        url: request.body.webhook.url,
       }
 
-      return { success: Boolean(result) };
+      let result
+      try {
+        result = await instance.sequelize.models.Webhook.create(record)
+      } catch (error) {
+        console.log(error)
+      }
+
+      return { success: Boolean(result) }
     }
-  );
+  )
 
   instance.delete(
     '/:id(^\\d+)',
 
-    async request => {
-      const webhook = await instance.sequelize.models.Webhook.findByIdAndUserId(request.params.id, request.user.id);
+    async (request) => {
+      const webhook = await instance.sequelize.models.Webhook.findByIdAndUserId(
+        request.params.id,
+        request.user.id
+      )
 
-      await instance.sequelize.transaction(async transaction => {
-        await webhook.destroy({ transaction });
+      await instance.sequelize.transaction(async (transaction) => {
+        await webhook.destroy({ transaction })
         await instance.sequelize.models.Payload.destroy({
           where: {
             webhookId: webhook.id,
           },
-          transaction
-        });
-      });
+          transaction,
+        })
+      })
 
-      return { success: true };
+      return { success: true }
     }
-  );
+  )
 
   instance.post(
     '/:id(^\\d+)/disable/',
 
-    async request => {
-      const webhook = await instance.sequelize.models.Webhook.findByIdAndUserId(request.params.id, request.user.id);
+    async (request) => {
+      const webhook = await instance.sequelize.models.Webhook.findByIdAndUserId(
+        request.params.id,
+        request.user.id
+      )
 
       if (webhook.status == 'enabled' || webhook.status == 'failed') {
-        webhook.status = 'disabled';
-        await webhook.save();
+        webhook.status = 'disabled'
+        await webhook.save()
       }
 
       return {
         success: true,
-        status: webhook.status
-      };
+        status: webhook.status,
+      }
     }
-  );
+  )
 
   instance.post(
     '/:id(^\\d+)/enable/',
 
-    async request => {
-      const webhook = await instance.sequelize.models.Webhook.findByIdAndUserId(request.params.id, request.user.id);
+    async (request) => {
+      const webhook = await instance.sequelize.models.Webhook.findByIdAndUserId(
+        request.params.id,
+        request.user.id
+      )
 
       if (webhook.status == 'disabled' || webhook.status == 'failed') {
-        webhook.status = 'enabled';
-        await webhook.save();
+        webhook.status = 'enabled'
+        await webhook.save()
       }
 
       return {
         success: true,
-        status: webhook.status
-      };
+        status: webhook.status,
+      }
     }
-  );
+  )
 
   instance.post(
     '/:id(^\\d+)/update_url/',
@@ -234,35 +255,38 @@ export default async function routes(instance) {
           type: 'object',
           properties: {
             url: {
-              type: 'string'
-            }
+              type: 'string',
+            },
           },
-          required: ['url']
-        }
-      }
+          required: ['url'],
+        },
+      },
     },
 
-    async request => {
-      const webhook = await instance.sequelize.models.Webhook.findByIdAndUserId(request.params.id, request.user.id);
+    async (request) => {
+      const webhook = await instance.sequelize.models.Webhook.findByIdAndUserId(
+        request.params.id,
+        request.user.id
+      )
 
-      const formerUrl = webhook.url;
+      const formerUrl = webhook.url
 
-      webhook.url = request.body.url;
-      await webhook.save();
+      webhook.url = request.body.url
+      await webhook.save()
 
       await instance.sequelize.models.Payload.update(
         {
-          url: request.body.url
+          url: request.body.url,
         },
         {
           where: {
             webhookId: webhook.id,
-            url: formerUrl
-          }
+            url: formerUrl,
+          },
         }
-      );
+      )
 
-      return { success: true };
+      return { success: true }
     }
-  );
+  )
 }
