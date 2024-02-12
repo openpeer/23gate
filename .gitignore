@@ -103,5 +103,4 @@ dist
 # TernJS port file
 .tern-port
 
-providers.mjs
 abi-cache.json
