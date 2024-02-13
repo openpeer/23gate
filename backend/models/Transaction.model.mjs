@@ -33,12 +33,19 @@ export class Transaction extends Model {
     },
   }
 
-  static async destroyTransactionsByHashList(transactionHash, transaction) {
+  static async destroyTransactionsByHashList(transactionHashList, transaction) {
+    const lowerCaseTransactionHashList = transactionHashList.map((hash) =>
+      hash.toLowerCase()
+    )
+
     await this.destroy({
-      where: Sequelize.where(
-        Sequelize.fn('lower', Sequelize.col('transactionHash')),
-        transactionHash
-      ),
+      where: {
+        transactionHash: Sequelize.where(
+          Sequelize.fn('lower', Sequelize.col('transactionHash')),
+          Sequelize.Op.in,
+          lowerCaseTransactionHashList
+        ),
+      },
       transaction,
     })
   }
