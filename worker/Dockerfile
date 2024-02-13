@@ -4,6 +4,7 @@ WORKDIR /app
 COPY common/ ./common/
 COPY backend/package*.json ./backend/
 RUN mkdir logs
+RUN chmod 777 logs
 
 WORKDIR /app/backend
 RUN npm install --omit=dev
