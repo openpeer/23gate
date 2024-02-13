@@ -37,7 +37,7 @@ export class Transaction extends Model {
     await this.destroy({
       where: Sequelize.where(
         Sequelize.fn('lower', Sequelize.col('transactionHash')),
-        transactionHash.map((hash) => hash.toLowerCase())
+        transactionHash
       ),
       transaction,
     })
