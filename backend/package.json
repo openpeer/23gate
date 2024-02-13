@@ -19,7 +19,6 @@
     "fastify-auth0-verify": "^1.2.0",
     "mysql2": "^3.6.1",
     "node-fetch": "^3.3.2",
-    "nodemon": "^3.0.3",
     "pino-pretty": "^10.2.0",
     "sequelize": "^6.33.0"
   },
