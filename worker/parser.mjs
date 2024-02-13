@@ -257,7 +257,7 @@ async function processDownloadedTransactions() {
 
     const webhooks = await loadWebhooks()
 
-    logger.trace(
+    console.log(
       `Found ${transactionsList.length} transactions to parse for ${webhooks.length} webhooks`
     )
 

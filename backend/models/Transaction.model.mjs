@@ -34,17 +34,15 @@ export class Transaction extends Model {
   }
 
   static async destroyTransactionsByHashList(transactionHashList, transaction) {
-    const lowerCaseTransactionHashList = transactionHashList.map((hash) =>
-      hash.toLowerCase()
+    const bufferTransactionHashList = transactionHashList.map((hash) =>
+      Sequelize.fn('UNHEX', hash.replace(/^0x/, ''))
     )
 
     await this.destroy({
       where: {
-        transactionHash: Sequelize.where(
-          Sequelize.fn('lower', Sequelize.col('transactionHash')),
-          Sequelize.Op.in,
-          lowerCaseTransactionHashList
-        ),
+        transactionHash: {
+          [Sequelize.Op.in]: bufferTransactionHashList,
+        },
       },
       transaction,
     })
