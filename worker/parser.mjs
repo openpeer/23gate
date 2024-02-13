@@ -13,8 +13,8 @@ BigInt.prototype.toJSON = function () {
 }
 
 const DEADLOCK_INTERVAL = 100
-const INTERVAL_BETWEEN_ZERO_TRANSACTIONS_TO_PARSE = ms('2.3s')
-const INTERVAL_BETWEEN_TRANSACTIONS_TO_PARSE = ms('1.5s')
+const INTERVAL_BETWEEN_ZERO_TRANSACTIONS_TO_PARSE = ms('5s')
+const INTERVAL_BETWEEN_TRANSACTIONS_TO_PARSE = ms('5s')
 
 const argv = yargs(hideBin(process.argv))
   .wrap(180)
