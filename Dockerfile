@@ -13,4 +13,6 @@ ENV NODE_ENV "$NODE_ENV"
 ENV LISTEN_HOST "$LISTEN_HOST"
 ENV LISTEN_PORT "$LISTEN_PORT"
 
-CMD ["node", "index.mjs"]
+RUN npm install -g nodemon
+
+CMD ["nodemon", "index.mjs"]

@@ -20,3 +20,5 @@ COPY worker/ .
 ENV NODE_ENV "$NODE_ENV"
 ENV BLAST_RPC_URL "$BLAST_RPC_URL"
 ENV LOG_DIR "$LOG_DIR"
+
+RUN npm install -g nodemon

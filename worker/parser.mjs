@@ -191,6 +191,11 @@ async function savePayloadsAndDeleteTransactions(
   transactionHashList,
   c = 0
 ) {
+  console.log('savePayloadsAndDeleteTransactions', {
+    records,
+    transactionHashList,
+    c,
+  })
   if (c > 0) {
     await setTimeout(DEADLOCK_INTERVAL)
   }
@@ -202,18 +207,21 @@ async function savePayloadsAndDeleteTransactions(
   try {
     await sequelize.transaction(async (transaction) => {
       if (records.length > 0) {
+        console.log('Creating records', records)
         await sequelize.models.Payload.bulkCreate(records, {
           ignoreDuplicates: true,
           transaction,
         })
       }
 
+      console.log('Deleting transactions', transactionHashList)
       await sequelize.models.Transaction.destroyTransactionsByHashList(
         transactionHashList,
         transaction
       )
     })
   } catch (e) {
+    console.log('savePayloadsAndDeleteTransactions error', e)
     if (e.parent?.code == 'ER_LOCK_DEADLOCK') {
       if (c > 1) {
         logger.warn(
