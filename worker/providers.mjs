@@ -1,6 +1,5 @@
 export const providers = {
-  // chainId
-  0xa0c71fd: [
+  0x13e31: [
     {
       // RPC provider URL
       url: process.env.BLAST_RPC_URL,

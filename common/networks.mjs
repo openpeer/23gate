@@ -6,7 +6,7 @@ const networks = [
     explorerUrl: 'https://etherscan.io/search?q=',
     icon: '/networks/ethereum.png',
     outdatedThresholdSeconds: 600,
-    isEnabled: true
+    isEnabled: true,
   },
 
   {
@@ -16,7 +16,7 @@ const networks = [
     explorerUrl: 'https://polygonscan.com/search?q=',
     icon: '/networks/polygon.png',
     outdatedThresholdSeconds: 600,
-    isEnabled: true
+    isEnabled: true,
   },
 
   {
@@ -26,7 +26,7 @@ const networks = [
     explorerUrl: 'https://bscscan.com/search?q=',
     icon: '/networks/bnb.png',
     outdatedThresholdSeconds: 600,
-    isEnabled: true
+    isEnabled: true,
   },
 
   {
@@ -36,7 +36,7 @@ const networks = [
     explorerUrl: 'https://testnet.blastscan.io/tx/',
     icon: '/networks/blast.png',
     outdatedThresholdSeconds: 600,
-    isEnabled: true
+    isEnabled: true,
   },
 
   {
@@ -46,39 +46,48 @@ const networks = [
     explorerUrl: 'https://ftmscan.com/search?q=',
     icon: '/networks/fantom-opera.png',
     outdatedThresholdSeconds: 600,
-    isEnabled: false
-  }
-];
+    isEnabled: false,
+  },
+  {
+    chainId: 0x13e31,
+    title: 'Blast',
+    aliases: ['blast'],
+    explorerUrl: 'https://blastscan.io/tx/',
+    icon: '/networks/blast.png',
+    outdatedThresholdSeconds: 600,
+    isEnabled: true,
+  },
+]
 
-const networkByChainId = {};
-const chainIdByTitle = {};
-const networksListForSelect = [];
+const networkByChainId = {}
+const chainIdByTitle = {}
+const networksListForSelect = []
 
 for (const network of networks) {
-  networkByChainId[network.chainId] = network;
+  networkByChainId[network.chainId] = network
 
-  chainIdByTitle[network.title.toLowerCase()] = network.chainId;
+  chainIdByTitle[network.title.toLowerCase()] = network.chainId
 
   if (network.aliases) {
     network.aliases.forEach(
       (alias) => (chainIdByTitle[alias.toLowerCase()] = network.chainId)
-    );
+    )
   }
 
   if (network.isEnabled) {
     networksListForSelect.push({
       label: network.title,
       value: network.chainId,
-      icon: network.icon
-    });
+      icon: network.icon,
+    })
   } else {
     networksListForSelect.push({
       label: network.title + ' (coming soon!)',
       value: network.chainId,
       icon: network.icon,
-      attrs: { disabled: true }
-    });
+      attrs: { disabled: true },
+    })
   }
 }
 
-export { networks, networkByChainId, chainIdByTitle, networksListForSelect };
+export { networks, networkByChainId, chainIdByTitle, networksListForSelect }
